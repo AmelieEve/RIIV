@@ -11,6 +11,7 @@
 *.sln.docstates
 images/**
 assets/**
+OpenCV1/results.arff
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
