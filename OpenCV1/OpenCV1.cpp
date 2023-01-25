@@ -122,6 +122,11 @@ int main()
         threshold(grayscaleImage, binaryImage, 200, 255, THRESH_BINARY);
 
         Scalar meanGrayValue = mean(binaryImage);
+
+        if (meanGrayValue[0] == 255.0) {
+            continue;
+        }
+
         attributes.push_back(to_string(meanGrayValue[0]));
         pair<double, double> centerOfMass = contoursCenterOfMass(grayscaleImage);
         attributes.push_back(to_string(centerOfMass.first));
