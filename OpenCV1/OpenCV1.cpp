@@ -14,6 +14,9 @@
 #define symbol_list String("{accident,bomb,car,casualty,electricity,fire,firebrigade,flood,gas,injury,paramedics,person,police,roadblock}")
 #define size_list String("{small,medium,large}")
 
+constexpr auto X_ZONING = 3;
+constexpr auto Y_ZONING = 3;
+
 using namespace cv;
 using namespace std;
 namespace fs = filesystem;
@@ -67,6 +70,8 @@ int main()
     Mat originalImage;
     Mat grayscaleImage;
     Mat binaryImage;
+    Mat croppedImage;
+    Mat zonedImage;
 
     String imgsPath = "../images/exemples";
     String txtsPath = "../images/exemples_txt/";
@@ -75,9 +80,20 @@ int main()
     list<pair<String, String>> attrList;
     attrList.push_back({ String("symbol"), symbol_list});
     attrList.push_back({ String("size"), size_list});
+    attrList.push_back({ String("height"), num});
+    attrList.push_back({ String("width"), num});
     attrList.push_back({ String("mean_gray"), num});
     attrList.push_back({ String("center_of_mass_X"), num});
     attrList.push_back({ String("center_of_mass_Y"), num});
+
+    for (int i = 0; i < X_ZONING; i++) {
+        for (int j = 0; j < Y_ZONING; j++) {
+            attrList.push_back({ String("mean_gray_X_zone_" + to_string(i) + "_" + to_string(j) ), num});
+            attrList.push_back({ String("center_of_mass_X_zone_" + to_string(i) + "_" + to_string(j) ), num});
+            attrList.push_back({ String("center_of_mass_Y_zone_" + to_string(i) + "_" + to_string(j) ), num});
+        }
+    }
+
     arffFile << generateARFFHeader("results", attrList);
 
     map<String, list<pair<double,pair<double, double>>>> map;
@@ -120,10 +136,22 @@ int main()
 
         cvtColor(originalImage, grayscaleImage, COLOR_BGR2GRAY);
         threshold(grayscaleImage, binaryImage, 200, 255, THRESH_BINARY);
+        cropFromContour(grayscaleImage, croppedImage);
 
-        Scalar meanGrayValue = mean(binaryImage);
+        if (croppedImage.rows == 0 || croppedImage.cols == 0) {
+            continue;
+        }
+
+        attributes.push_back(to_string(croppedImage.rows));
+        attributes.push_back(to_string(croppedImage.cols));
+
+        Size newSize = Size(128, 128);
+        resize(croppedImage, croppedImage, newSize);
+
+        Scalar meanGrayValue = mean(croppedImage);
         attributes.push_back(to_string(meanGrayValue[0]));
-        pair<double, double> centerOfMass = contoursCenterOfMass(grayscaleImage);
+
+        pair<double, double> centerOfMass = contourCenterOfMass(croppedImage);
         attributes.push_back(to_string(centerOfMass.first));
         attributes.push_back(to_string(centerOfMass.second));
 
@@ -136,6 +164,20 @@ int main()
         else {
             map.find(actualLabel + " " + size)->second.push_back({ meanGrayValue[0], centerOfMass });
         }
+
+        for (int i = 0; i < X_ZONING; i++) {
+            for (int j = 0; j < Y_ZONING; j++) {
+                zonedImage = croppedImage(Range(36 * i, 36 * i + 56), Range(36 * j, 36 * j + 56));
+                meanGrayValue = mean(zonedImage);
+                attributes.push_back(to_string(meanGrayValue[0]));
+                    
+                centerOfMass = contourCenterOfMass(zonedImage);
+                attributes.push_back(to_string(centerOfMass.first));
+                attributes.push_back(to_string(centerOfMass.second));
+            }
+        }
+
+        waitKey(0);
 
         arffFile << generateARFFLine(attributes);
     }

@@ -1,12 +1,18 @@
 #include "contours.h"
 
-pair<double, double> contoursCenterOfMass(const Mat& inputGrayImg)
+pair<double, double> contourCenterOfMass(const Mat& inputImg)
 {
-    Mat outputContours = inputGrayImg.clone();
+    Moments m = moments(inputImg);
+    return { m.m10 / m.m00, m.m01 / m.m00 };
+}
+
+void cropFromContour(const Mat& inputGrayImg, Mat& outputImg)
+{
+    Mat workingImage = inputGrayImg.clone();
     vector<vector<Point>> contours;
 
-    Canny(outputContours, outputContours, 0, 230);
-    findContours(outputContours, contours, RETR_LIST, CHAIN_APPROX_SIMPLE, Point(0, 0));
+    Canny(workingImage, workingImage, 0, 230);
+    findContours(workingImage, contours, RETR_LIST, CHAIN_APPROX_SIMPLE, Point(0, 0));
 
     vector<Point> outerContour;
     double maxContourArea = 0.0;
@@ -16,7 +22,7 @@ pair<double, double> contoursCenterOfMass(const Mat& inputGrayImg)
             maxContourArea = contourArea(cont);
         }
     }
-    Moments m = moments(outerContour);
+    Rect rectangle = boundingRect(outerContour);
 
-    return { m.m10 / m.m00, m.m01 / m.m00 };
+    outputImg = inputGrayImg(rectangle);
 }

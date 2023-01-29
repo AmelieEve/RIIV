@@ -9,5 +9,10 @@ using namespace cv;
 /*
  * Calcule le centre de gravité d'une image passée en paramètre 
  */
-pair<double, double> contoursCenterOfMass(const Mat& inputImg);
+pair<double, double> contourCenterOfMass(const Mat& inputImg);
+
+/* 
+ * Retourne une image croppée par rapport à ses contours
+ */
+void cropFromContour(const Mat& inputGrayImg, Mat& outputImg);
 #endif // !CONTOURS_H
