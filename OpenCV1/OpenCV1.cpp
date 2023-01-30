@@ -88,7 +88,7 @@ int main()
 
     for (int i = 0; i < X_ZONING; i++) {
         for (int j = 0; j < Y_ZONING; j++) {
-            attrList.push_back({ String("mean_gray_X_zone_" + to_string(i) + "_" + to_string(j) ), num});
+            attrList.push_back({ String("mean_gray_zone_" + to_string(i) + "_" + to_string(j) ), num});
             attrList.push_back({ String("center_of_mass_X_zone_" + to_string(i) + "_" + to_string(j) ), num});
             attrList.push_back({ String("center_of_mass_Y_zone_" + to_string(i) + "_" + to_string(j) ), num});
         }
@@ -176,8 +176,6 @@ int main()
                 attributes.push_back(to_string(centerOfMass.second));
             }
         }
-
-        waitKey(0);
 
         arffFile << generateARFFLine(attributes);
     }
