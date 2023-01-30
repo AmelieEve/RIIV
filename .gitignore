@@ -12,7 +12,7 @@
 images/**
 assets/**
 small_images/**
-OpenCV1/results.arff
+/OpenCV1/results.arff
 CmakeLists.txt
 
 # User-specific files (MonoDevelop/Xamarin Studio)
