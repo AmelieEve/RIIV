@@ -134,11 +134,13 @@
   <ItemGroup>
     <ClCompile Include="contours.cpp" />
     <ClCompile Include="creationARFF.cpp" />
+    <ClCompile Include="features/density.cpp" />
     <ClCompile Include="OpenCV1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="contours.h" />
     <ClInclude Include="creationARFF.h" />
+    <ClInclude Include="features/density.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,7 +7,7 @@ using namespace cv;
 
 class Feature
 {
-private :
+protected :
 	vector<double> values;
 	String name;
 

@@ -1,5 +1,4 @@
-#include "Feature.h"
-
+#include "features/Feature.h"
 
 #define num String("NUMERIC")
 
@@ -16,7 +15,7 @@ vector<pair<String, String>> Feature::generateArffHeaderPortion()
 
 	for (double value : values)
 	{
-		result.push_back({ String(name + to_string(i)), num });
+		result.push_back({ String(name + "_" + to_string(i)), num});
 		i++;
 	}
 
