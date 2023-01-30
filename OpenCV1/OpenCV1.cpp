@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <fstream>
 #include <opencv2/opencv.hpp>
@@ -9,6 +7,8 @@
 #include <filesystem>
 #include "contours.h"
 #include "creationARFF.h"
+#include "features/Feature.h"
+#include "features/CenterOfMass.h"
 
 #define num String("NUMERIC")
 #define symbol_list String("{accident,bomb,car,casualty,electricity,fire,firebrigade,flood,gas,injury,paramedics,person,police,roadblock}")
@@ -67,16 +67,27 @@ pair<double, double> standardDeviationCenterOfMass(const list<pair<double, pair<
 
 int main()
 {
+    /**
+     * INITIALIZATION
+     **/
+
+    //Mat containers
     Mat originalImage;
     Mat grayscaleImage;
     Mat binaryImage;
     Mat croppedImage;
     Mat zonedImage;
 
+    //Files and paths
     String imgsPath = "../images/exemples";
     String txtsPath = "../images/exemples_txt/";
     ofstream arffFile("results.arff");
 
+    //Features
+    CenterOfMass centerOfMassComputing("center_of_mass");
+
+    //ARFF file header
+    //TODO: generate header portions from features classes' function
     list<pair<String, String>> attrList;
     attrList.push_back({ String("symbol"), symbol_list});
     attrList.push_back({ String("size"), size_list});
@@ -96,8 +107,9 @@ int main()
 
     arffFile << generateARFFHeader("results", attrList);
 
-    map<String, list<pair<double,pair<double, double>>>> map;
-
+    /**
+     * FEATURES EXTRACTION
+     **/
     for (const auto& entry : fs::directory_iterator(imgsPath)) {
         String fileName = entry.path().filename().string();
         fileName = fileName.substr(0, fileName.find(".")) + ".txt";
@@ -134,57 +146,54 @@ int main()
 
         attributes.push_back(size);
 
+        //Binarization
         cvtColor(originalImage, grayscaleImage, COLOR_BGR2GRAY);
         threshold(grayscaleImage, binaryImage, 200, 255, THRESH_BINARY);
         cropFromContour(grayscaleImage, croppedImage);
 
+        //Test to avoid processing white images
         if (croppedImage.rows == 0 || croppedImage.cols == 0) {
             continue;
         }
 
+        //Contour's height
         attributes.push_back(to_string(croppedImage.rows));
+        //Contour's width
         attributes.push_back(to_string(croppedImage.cols));
 
+        //Size normalization
+        //TODO: size normalization without deformation
+        //TODO: define size (not hard-coded)
         Size newSize = Size(128, 128);
         resize(croppedImage, croppedImage, newSize);
 
+        /*
+         * Features
+         */
+        //TODO: separate features in classes and generate arff lines portions from their functions
         Scalar meanGrayValue = mean(croppedImage);
         attributes.push_back(to_string(meanGrayValue[0]));
 
-        pair<double, double> centerOfMass = contourCenterOfMass(croppedImage);
-        attributes.push_back(to_string(centerOfMass.first));
-        attributes.push_back(to_string(centerOfMass.second));
+        vector<double> centerOfMass = centerOfMassComputing(croppedImage);
+        attributes.push_back(to_string(centerOfMass[0]));
+        attributes.push_back(to_string(centerOfMass[1]));
 
-        if (map.find(actualLabel + " " + size) == map.end()) {
-            list<pair<double, pair<double, double>>> dlist;
-            dlist.push_back({ meanGrayValue[0], centerOfMass });
-            map.insert(make_pair(actualLabel + " " + size, dlist));
-            cout << "new entry : " << actualLabel + " " + size << endl;
-        }
-        else {
-            map.find(actualLabel + " " + size)->second.push_back({ meanGrayValue[0], centerOfMass });
-        }
-
+        //Zoning
         for (int i = 0; i < X_ZONING; i++) {
             for (int j = 0; j < Y_ZONING; j++) {
                 zonedImage = croppedImage(Range(36 * i, 36 * i + 56), Range(36 * j, 36 * j + 56));
                 meanGrayValue = mean(zonedImage);
                 attributes.push_back(to_string(meanGrayValue[0]));
-                    
-                centerOfMass = contourCenterOfMass(zonedImage);
-                attributes.push_back(to_string(centerOfMass.first));
-                attributes.push_back(to_string(centerOfMass.second));
+
+                centerOfMass = centerOfMassComputing(zonedImage);
+                attributes.push_back(to_string(centerOfMass[0]));
+                attributes.push_back(to_string(centerOfMass[1]));
             }
         }
 
         arffFile << generateARFFLine(attributes);
     }
     arffFile.close();
-    for (const auto& element : map) {
-        list<pair<double, pair<double, double>>> dlist = element.second;
-        pair<pair<double, double>, pair<double, double>> centerOfMass = { meanCenterOfMass(dlist), standardDeviationCenterOfMass(dlist) };
-        cout << element.first << " : " << mean(dlist) << " " << standardDeviation(dlist) << " (" << centerOfMass.first.first << ", " << centerOfMass.first.second << ") (" << centerOfMass.second.first << ", " << centerOfMass.second.second << ")" << endl;
-    }
 
     std::exit(0);
 }

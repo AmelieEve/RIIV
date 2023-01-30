@@ -1,11 +1,5 @@
 #include "contours.h"
 
-pair<double, double> contourCenterOfMass(const Mat& inputImg)
-{
-    Moments m = moments(inputImg);
-    return { m.m10 / m.m00, m.m01 / m.m00 };
-}
-
 void cropFromContour(const Mat& inputGrayImg, Mat& outputImg)
 {
     Mat workingImage = inputGrayImg.clone();
