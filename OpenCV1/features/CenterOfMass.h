@@ -13,7 +13,7 @@
 class CenterOfMass : public Feature {
 public:
     CenterOfMass(String n);
-    vector<double> operator() (const Mat& inputImg);
+    vector<double> operator() (const Mat& inputImg) override;
 };
 
 

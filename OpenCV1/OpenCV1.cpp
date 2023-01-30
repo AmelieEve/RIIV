@@ -9,6 +9,7 @@
 #include "creationARFF.h"
 #include "features/Feature.h"
 #include "features/CenterOfMass.h"
+#include "features/Density.h"
 
 #define num String("NUMERIC")
 #define symbol_list String("{accident,bomb,car,casualty,electricity,fire,firebrigade,flood,gas,injury,paramedics,person,police,roadblock}")
@@ -84,6 +85,7 @@ int main()
     ofstream arffFile("results.arff");
 
     //Features
+    Density densityComputing("mean_gray");
     CenterOfMass centerOfMassComputing("center_of_mass");
 
     //ARFF file header
