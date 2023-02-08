@@ -21,7 +21,7 @@ vector<pair<String, String>> Feature::generateArffHeaderPortion() {
 vector<String> Feature::generateArffLinePortion() {
 	vector<String> result;
 	for (double value : values) {
-		result.push_back(String(to_string(value)));
+		result.push_back(to_string(value));
 	}
 	return result;
 }

@@ -19,6 +19,7 @@ protected :
 
 public : 
 	Feature(String n);
+    vector<double> getValues() { return values; }
 	virtual vector<double> operator() (const Mat& inputImg) = 0;
 	vector<pair<String, String>> generateArffHeaderPortion();
 	vector<String> generateArffLinePortion();

@@ -7,9 +7,6 @@
 #include <filesystem>
 #include "contours.h"
 #include "creationARFF.h"
-#include "features/Feature.h"
-#include "features/CenterOfMass.h"
-#include "features/Density.h"
 
 #define num String("NUMERIC")
 #define symbol_list String("{accident,bomb,car,casualty,electricity,fire,firebrigade,flood,gas,injury,paramedics,person,police,roadblock}")
@@ -66,6 +63,11 @@ pair<double, double> standardDeviationCenterOfMass(const list<pair<double, pair<
     return { meanX, meanY };
 }
 
+vector<double> centerOfMassComputing(const Mat& inputImg) {
+    Moments m = moments(inputImg);
+    return {m.m10 / m.m00, m.m01 / m.m00};
+}
+
 int main()
 {
     /**
@@ -84,18 +86,14 @@ int main()
     String txtsPath = "../images/exemples_txt/";
     ofstream arffFile("results.arff");
 
-    //Features
-    Density densityComputing("mean_gray");
-    CenterOfMass centerOfMassComputing("center_of_mass");
-
     //ARFF file header
-    //TODO: generate header portions from features classes' function
+    //TODO: generate header portions from old_features_modules classes' function
     list<pair<String, String>> attrList;
     attrList.push_back({ String("symbol"), symbol_list});
     attrList.push_back({ String("size"), size_list});
     attrList.push_back({ String("height"), num});
     attrList.push_back({ String("width"), num});
-    attrList.push_back(densityComputing.generateArffHeaderPortion()[0]);
+    attrList.push_back({String("mean_gray"), num});
     attrList.push_back({ String("center_of_mass_X"), num});
     attrList.push_back({ String("center_of_mass_Y"), num});
 
@@ -109,10 +107,13 @@ int main()
 
     arffFile << generateARFFHeader("results", attrList);
 
+    int arffGenerationStep = 0;
+
     /**
      * FEATURES EXTRACTION
      **/
     for (const auto& entry : fs::directory_iterator(imgsPath)) {
+        //File reading
         String fileName = entry.path().filename().string();
         fileName = fileName.substr(0, fileName.find(".")) + ".txt";
 
@@ -131,18 +132,20 @@ int main()
         getline(infile, lineSize);
         getline(infile, lineSize);
 
+        //Get label
         istringstream iss1(lineLabel);
         String label, actualLabel;
         iss1 >> label >> actualLabel;
         attributes.push_back(actualLabel);
 
+        //Get size
         istringstream iss2(lineSize);
         String size;
         iss2 >> label >> size;
 
         infile.close();
 
-        if (size == "") {
+        if (size.empty()) {
             size = "medium";
         }
 
@@ -172,10 +175,11 @@ int main()
         /*
          * Features
          */
-        //TODO: separate features in classes and generate arff lines portions from their functions
+        //Density
         Scalar meanGrayValue = mean(croppedImage);
         attributes.push_back(to_string(meanGrayValue[0]));
 
+        //Center of mass
         vector<double> centerOfMass = centerOfMassComputing(croppedImage);
         attributes.push_back(to_string(centerOfMass[0]));
         attributes.push_back(to_string(centerOfMass[1]));
@@ -194,6 +198,9 @@ int main()
         }
 
         arffFile << generateARFFLine(attributes);
+
+        arffGenerationStep++;
+        cout << to_string(arffGenerationStep) << endl;
     }
     arffFile.close();
 
