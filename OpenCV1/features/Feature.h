@@ -8,7 +8,13 @@ using namespace cv;
 class Feature
 {
 protected :
+    /**
+     * Container for the values computed by calling operator()
+     */
 	vector<double> values;
+    /**
+     * Name of the feature to be used in generation of arff file portions
+     **/
 	String name;
 
 public : 

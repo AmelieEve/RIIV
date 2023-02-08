@@ -95,7 +95,7 @@ int main()
     attrList.push_back({ String("size"), size_list});
     attrList.push_back({ String("height"), num});
     attrList.push_back({ String("width"), num});
-    attrList.push_back({ String("mean_gray"), num});
+    attrList.push_back(densityComputing.generateArffHeaderPortion()[0]);
     attrList.push_back({ String("center_of_mass_X"), num});
     attrList.push_back({ String("center_of_mass_Y"), num});
 
@@ -148,7 +148,7 @@ int main()
 
         attributes.push_back(size);
 
-        //Binarization
+        //Binarization and cropping from contour
         cvtColor(originalImage, grayscaleImage, COLOR_BGR2GRAY);
         threshold(grayscaleImage, binaryImage, 200, 255, THRESH_BINARY);
         cropFromContour(grayscaleImage, croppedImage);

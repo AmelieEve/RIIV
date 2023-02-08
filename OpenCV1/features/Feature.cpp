@@ -2,36 +2,26 @@
 
 #define num String("NUMERIC")
 
-Feature::Feature(String n)
-{
+Feature::Feature(String n) : name(n) {
 	values = vector<double>();
-	name = n;
 }
 
-vector<pair<String, String>> Feature::generateArffHeaderPortion()
-{
+vector<pair<String, String>> Feature::generateArffHeaderPortion() {
 	vector<pair<String, String>> result;
-	int i = 0;
-
-	for (double value : values)
-	{
-		result.push_back({ String(name + "_" + to_string(i)), num});
-		i++;
-	}
-
+    if(values.size() > 1) {
+        for(int i = 0; i < values.size() ; i++) {
+            result.push_back({String(name + "_" + to_string(i)), num});
+        }
+    } else {
+        result.push_back({name, num});
+    }
 	return result;
 }
 
-vector<String> Feature::generateArffLinePortion()
-{
+vector<String> Feature::generateArffLinePortion() {
 	vector<String> result;
-	int i = 0;
-
-	for (double value : values)
-	{
+	for (double value : values) {
 		result.push_back(String(to_string(value)));
-		i++;
 	}
-
 	return result;
 }

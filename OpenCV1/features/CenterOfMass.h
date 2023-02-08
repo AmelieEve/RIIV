@@ -7,9 +7,6 @@
 
 #include "Feature.h"
 
-/*
- * Calcule le centre de gravite d'une image passee en parametre
- */
 class CenterOfMass : public Feature {
 public:
     CenterOfMass(String n);
