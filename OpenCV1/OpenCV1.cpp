@@ -17,11 +17,6 @@ using namespace cv;
 using namespace std;
 namespace fs = filesystem;
 
-vector<double> centerOfMassComputing(const Mat& inputImg) {
-    Moments m = moments(inputImg);
-    return {m.m10 / m.m00, m.m01 / m.m00};
-}
-
 int main()
 {
     /**
@@ -104,7 +99,7 @@ int main()
         // Contour's width
         attributes.push_back(to_string(croppedImage.cols));
 
-        // Contour diagonal length
+        // Contour's diagonal length
         attributes.push_back(to_string(sqrt(pow(croppedImage.cols, 2) + pow(croppedImage.rows, 2))));
 
         // Area and perimeter
@@ -127,7 +122,8 @@ int main()
         attributes.push_back(to_string(meanGrayValue[0]));
 
         // Center of mass
-        vector<double> centerOfMass = centerOfMassComputing(croppedImage);
+        Moments m = moments(croppedImage);
+        vector<double> centerOfMass = {m.m10 / m.m00, m.m01 / m.m00};
         attributes.push_back(to_string(centerOfMass[0]));
         attributes.push_back(to_string(centerOfMass[1]));
 
@@ -141,7 +137,8 @@ int main()
                 attributes.push_back(to_string(meanGrayValue[0]));
 
                 // Center of mass
-                centerOfMass = centerOfMassComputing(zonedImage);
+                Moments mZone = moments(zonedImage);
+                centerOfMass = { mZone.m10 / mZone.m00, mZone.m01 / mZone.m00 };
                 attributes.push_back(to_string(centerOfMass[0]));
                 attributes.push_back(to_string(centerOfMass[1]));
             }
