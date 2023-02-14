@@ -42,6 +42,31 @@ accident_000_04_7_2,0.68,123,45,...,accident_small
 ...
 ```
 
+```
+@RELATION results
+@ATTRIBUTE symbol {accident,bomb,car,casualty,electricity,fire,firebrigade,flood,gas,injury,paramedics,person,police,roadblock}
+@ATTRIBUTE height NUMERIC
+@ATTRIBUTE width NUMERIC
+@ATTRIBUTE diagonalLength NUMERIC
+@ATTRIBUTE contourArea NUMERIC
+@ATTRIBUTE contourPerimeter NUMERIC
+@ATTRIBUTE equivalent_radius NUMERIC
+@ATTRIBUTE mean_gray NUMERIC
+@ATTRIBUTE center_of_mass_X NUMERIC
+@ATTRIBUTE center_of_mass_Y NUMERIC
+@ATTRIBUTE mean_gray_zone_0_0 NUMERIC
+@ATTRIBUTE center_of_mass_X_zone_0_0 NUMERIC
+@ATTRIBUTE center_of_mass_Y_zone_0_0 NUMERIC
+...
+@ATTRIBUTE mean_gray_zone_2_2 NUMERIC
+@ATTRIBUTE center_of_mass_X_zone_2_2 NUMERIC
+@ATTRIBUTE center_of_mass_Y_zone_2_2 NUMERIC
+
+@DATA
+police,214,214,302.641702, ... ,249.826212,27.504070,27.696206
+...
+```
+
 ## Classification
 
 These extracted features will later be used to build a classifier. The first tests will be done using Weka and its built-in classifiers. This will let us know if the characteristics we chose to extract were relevant or not.
