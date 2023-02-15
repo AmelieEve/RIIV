@@ -157,7 +157,6 @@ int main()
 
         // Corners
         // Uncomment following section to take corners into account
-
         /*
         vector<Point> listCornersCoordinates = goodFeaturesToTrackDetection(croppedImage);
         sort(listCornersCoordinates.begin(), listCornersCoordinates.end(), cmpDistToUpperLeft);
