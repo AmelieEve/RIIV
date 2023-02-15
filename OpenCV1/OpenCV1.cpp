@@ -32,7 +32,8 @@ int main()
     Mat zonedImage;
 
     // Files and paths
-    String imgsPath = "../images/exemples";
+//    String imgsPath = "../images/exemples";
+    String imgsPath = "../images/Test2_final_cropped";
     ofstream arffFile("results.arff");
 
     // ARFF file header
@@ -147,7 +148,6 @@ int main()
 
         // Corners
         // Uncomment following section to take corners into account
-
         /*
         vector<Point> listCornersCoordinates = goodFeaturesToTrackDetection(croppedImage);
         std::sort(listCornersCoordinates.begin(), listCornersCoordinates.end(), cmpDistToUpperLeft);

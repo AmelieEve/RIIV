@@ -2,7 +2,7 @@
 
 ## Project inputs
 
-The database is constituted of two separated directories : 
+The learning database is constituted of two separated directories : 
 - PNG images containing small hand-drawn symbols. One symbol per image;
 - txt files with an identical name, a label describing to which model the image is associated. 
 
@@ -20,9 +20,11 @@ column 2
 size small
 ```
 
+The test database is a small set of similar images.
+
 ## Feature extraction and outputs
 
-The feature extraction phase shall use OpenCV to extract characteristics from all images. These characteristics can be of various types, being as simple as a density of black pixels (after a binarization) or as complex as SIFT. 
+The feature extraction phase shall use OpenCV to extract characteristics from all images. These characteristics can be of various types, being as simple as a density of black pixels (after a binarization) or as complex as corners detection. 
 
 These features will be presented in a ARFF file format representing the whole processed image base. An ARFF file looks like that : 
 
@@ -73,4 +75,4 @@ These extracted features will later be used to build a classifier. The first tes
 
 ## Project architecture
 
-The project CMakeLists and main are in the root directory, an `assets` directory contains the annotated database from the first phase.
+The project CMakeLists and main are in the root directory, an `images` directory contains the annotated database from the first phase as well as the test database. The main program is in `OpenCV1.cpp` and the correct images directory has to be specified at the beginning of it.
