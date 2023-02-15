@@ -31,8 +31,8 @@ vector<Point> cornerHarrisDetection(const Mat& inputImg) {
         }
     }
 
-    namedWindow( "Corners detected" );
-    imshow( "Corners detected", dst_norm );
+    //namedWindow( "Corners detected" );
+    //imshow( "Corners detected", dst_norm );
 
     // Uncomment following line to see the detected corners displayed on each picture
 //    waitKey(0);
@@ -63,8 +63,8 @@ vector<Point> goodFeaturesToTrackDetection(const Mat& inputImg) {
     for(const auto & corner : corners) {
         circle( copy, corner, radius, Scalar(0, 255, 0), FILLED );
     }
-    namedWindow( "Corners detected" );
-    imshow( "Corners detected", copy );
+    //namedWindow( "Corners detected" );
+    //imshow( "Corners detected", copy );
 
     // Uncomment following line to see the detected corners displayed on each picture
 //    waitKey(0);

@@ -32,7 +32,7 @@ int main()
     Mat zonedImage;
 
     // Files and paths
-    String imgsPath = "../images/exemples";
+    String imgsPath = "../images/final_cropped";
     ofstream arffFile("results.arff");
 
     // ARFF file header
@@ -74,8 +74,19 @@ int main()
      **/
     for (const auto& entry : fs::directory_iterator(imgsPath)) {
         // File reading
-        String fileName = entry.path().filename().string();
-        fileName = fileName.substr(0, fileName.find("_"));
+        String tempfileName = entry.path().filename().string();
+        String fileName = tempfileName.substr(0, tempfileName.find("_"));
+
+        // Assures compatibility with test image base
+        if (fileName == "road") {
+            fileName = "roadblock";
+        }
+        if (fileName == "fire") {
+            if (tempfileName.substr(tempfileName.find("_") + 1, tempfileName.find("_") + 1) == "briga")
+            {
+                fileName = "firebrigade";
+            }
+        }
 
         originalImage =  imread(entry.path().string());
 
@@ -83,7 +94,6 @@ int main()
 
         // Get label
         attributes.push_back(fileName);
-
 
         // Binarization and cropping from contour
         cvtColor(originalImage, grayscaleImage, COLOR_BGR2GRAY);
@@ -150,7 +160,7 @@ int main()
 
         /*
         vector<Point> listCornersCoordinates = goodFeaturesToTrackDetection(croppedImage);
-        std::sort(listCornersCoordinates.begin(), listCornersCoordinates.end(), cmpDistToUpperLeft);
+        sort(listCornersCoordinates.begin(), listCornersCoordinates.end(), cmpDistToUpperLeft);
         for(const Point& p : listCornersCoordinates){
             attributes.push_back(to_string(p.x));
             attributes.push_back(to_string(p.y));
